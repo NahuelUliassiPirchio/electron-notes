@@ -1,10 +1,21 @@
-import './App.css'
+import NoteItem, { Note } from './components/Note'
+import NoteContainer from './components/NotesContainer'
+import './styles/App.css'
+
+const MOCKED_NOTES: Array<Note> = [{
+  id: '1',
+  title: 'Electron js',
+  body: 'contextIsolation sirve para separar procesos'
+}]
 
 function App() {
 
   return (
     <>
-      running
+      <h1><u>Notes</u></h1>
+      <NoteContainer>
+        {MOCKED_NOTES.map(note => <NoteItem key={note.id} id={note.id} title={note.title} body={note.body}/>)}
+      </NoteContainer>
     </>
   )
 }

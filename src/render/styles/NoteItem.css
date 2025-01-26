@@ -1,0 +1,28 @@
+.note-item-container{
+    background-color: #494747;
+    border-radius: 12px;
+    position: relative;
+}
+
+.title {
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.note-body {
+    padding: .5rem;
+    margin: 1rem;
+    text-align: left;
+}
+.note-body:hover {
+    background-color: #353333;
+}
+
+.button {
+    border-radius: 50%;
+}
+.delete-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
