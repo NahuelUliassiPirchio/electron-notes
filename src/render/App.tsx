@@ -1,4 +1,6 @@
-import NoteItem, { Note } from './components/Note'
+import { Note } from '../types'
+import NoteItem from './components/Note'
+import NoteInput from './components/NoteInput'
 import NoteContainer from './components/NotesContainer'
 import './styles/App.css'
 
@@ -13,8 +15,13 @@ function App() {
   return (
     <>
       <h1><u>Notes</u></h1>
+      <NoteInput/>
       <NoteContainer>
-        {MOCKED_NOTES.map(note => <NoteItem key={note.id} id={note.id} title={note.title} body={note.body}/>)}
+        {
+          MOCKED_NOTES.map(note => 
+            <NoteItem key={note.id} id={note.id} title={note.title} body={note.body}/>
+          )
+        }
       </NoteContainer>
     </>
   )

@@ -1,11 +1,6 @@
 import { BaseSyntheticEvent } from 'react';
 import '../styles/NoteItem.css'
-
-export interface Note {
-    id: string;
-    title: string;
-    body: string;
-}
+import { Note } from '../../types';
 
 export default function NoteItem(noteContent: Note){
 
