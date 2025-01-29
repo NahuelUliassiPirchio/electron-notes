@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import {Note} from '../types.js' 
+import { Note } from '../../types.js' 
 
 const filePath = './notes.json';
 
@@ -57,24 +57,24 @@ export async function deleteNote(id: string): Promise<{ success: boolean }> {
   return { success: true };
 }
 
-(async () => {
-    await ensureFileExists();
+// (async () => {
+//     await ensureFileExists();
   
-    // Add a new note
-    await addNote({
-      id: '2',
-      title: 'Node.js',
-      body: 'fs/promises permite manejar archivos asíncronamente',
-    });
+//     // Add a new note
+//     await addNote({
+//       id: '2',
+//       title: 'Node.js',
+//       body: 'fs/promises permite manejar archivos asíncronamente',
+//     });
   
-    // Get all notes
-    console.log('All Notes:', await getNotes());
+//     // Get all notes
+//     console.log('All Notes:', await getNotes());
   
-    // Update a note
-    await updateNote('2', { body: 'Actualizamos el contenido de la nota' });
-    console.log('Updated Note:', await getNotes());
+//     // Update a note
+//     await updateNote('2', { body: 'Actualizamos el contenido de la nota' });
+//     console.log('Updated Note:', await getNotes());
   
-    // Delete a note
-    await deleteNote('1');
-    console.log('Notes after deletion:', await getNotes());
-  })();
+//     // Delete a note
+//     await deleteNote('1');
+//     console.log('Notes after deletion:', await getNotes());
+//   })();

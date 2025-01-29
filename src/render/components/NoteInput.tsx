@@ -1,4 +1,5 @@
 import {BaseSyntheticEvent, useState} from 'react'
+import {v4 as uuidv4} from 'uuid'
 
 export default function NoteInput(){
     const [noteText, setNoteText] = useState<string>('')
@@ -6,7 +7,11 @@ export default function NoteInput(){
     const handleSubmit = (e: BaseSyntheticEvent) =>{
         e.preventDefault()
         if(noteText.length == 0) return
-        // save text
+        window.notes.add({
+            title: '',
+            id: uuidv4(),
+            body: noteText
+        })
     }
 
     const handleWriteText = (e: BaseSyntheticEvent) =>{

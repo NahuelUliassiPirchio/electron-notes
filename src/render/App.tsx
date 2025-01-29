@@ -1,4 +1,5 @@
-import { Note } from '../types'
+import { useEffect, useState } from 'react'
+import { Note } from '../../types'
 import NoteItem from './components/Note'
 import NoteInput from './components/NoteInput'
 import NoteContainer from './components/NotesContainer'
@@ -10,7 +11,17 @@ const MOCKED_NOTES: Array<Note> = [{
   body: 'contextIsolation sirve para separar procesos'
 }]
 
+async function getNotes() {
+  return window.notes.getAll()
+}
+
 function App() {
+  const [notes, setNotes] = useState<Array<Note>>([])
+
+  useEffect(()=>{
+    getNotes()
+      .then(notes=> setNotes(notes))
+  },[])
 
   return (
     <>
@@ -18,7 +29,7 @@ function App() {
       <NoteInput/>
       <NoteContainer>
         {
-          MOCKED_NOTES.map(note => 
+          notes.map(note => 
             <NoteItem key={note.id} id={note.id} title={note.title} body={note.body}/>
           )
         }

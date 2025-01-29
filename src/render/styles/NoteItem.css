@@ -20,9 +20,13 @@
 
 .button {
     border-radius: 50%;
+    background-color: grey;
 }
 .delete-button {
     position: absolute;
     top: 1rem;
     right: 1rem;
+}
+.delete-button img {
+    width: 1rem;
 }
