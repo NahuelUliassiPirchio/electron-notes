@@ -1,29 +1,51 @@
 import { BaseSyntheticEvent, useState } from 'react';
-import deleteIcon from '../assets/delete-icon.svg'
+import deleteIcon from '../assets/delete-icon.svg';
 import '../styles/NoteItem.css';
 import { Note } from '../../../types';
 
 export default function NoteItem(noteContent: Note) {
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditingBody, setIsEditingBody] = useState(false);
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [title, setTitle] = useState(noteContent.title);
     const [body, setBody] = useState(noteContent.body);
 
-    const handleEdit = () => {
-        setIsEditing(true);
+    const handleTitleClick = () => {
+        setIsEditingTitle(true);
     };
 
-    const handleChange = (e: BaseSyntheticEvent) => {
+    const handleTitleChange = (e: BaseSyntheticEvent) => {
+        setTitle(e.target.value);
+    };
+
+    const handleTitleSave = () => {
+        setIsEditingTitle(false);
+        window.notes.update(noteContent.id, { ...noteContent, title });
+    };
+
+    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleTitleSave();
+        }
+    };
+
+    const handleBodyClick = () => {
+        setIsEditingBody(true);
+    };
+
+    const handleBodyChange = (e: BaseSyntheticEvent) => {
         setBody(e.target.value);
     };
 
-    const handleSave = () => {
-        setIsEditing(false);
+    const handleBodySave = () => {
+        setIsEditingBody(false);
         window.notes.update(noteContent.id, { ...noteContent, body });
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const handleBodyKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSave();
+            handleBodySave();
         }
     };
 
@@ -33,22 +55,38 @@ export default function NoteItem(noteContent: Note) {
 
     return (
         <li className='note-item-container'>
-            <h2 className='title'>{noteContent.title}</h2>
-            {isEditing ? (
-                <textarea
-                    className='note-body-edit'
-                    value={body}
-                    onChange={handleChange}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
+            {isEditingTitle ? (
+                <input
+                    type='text'
+                    className='note-title-edit'
+                    value={title}
+                    onChange={handleTitleChange}
+                    onBlur={handleTitleSave}
+                    onKeyDown={handleTitleKeyDown}
                     autoFocus
                 />
             ) : (
-                <p className='note-body' onClick={handleEdit}>
+                <h2 className='title' onClick={handleTitleClick}>
+                    {title}
+                </h2>
+            )}
+
+            {isEditingBody ? (
+                <textarea
+                    className='note-body-edit'
+                    value={body}
+                    onChange={handleBodyChange}
+                    onBlur={handleBodySave}
+                    onKeyDown={handleBodyKeyDown}
+                    autoFocus
+                />
+            ) : (
+                <p className='note-body' onClick={handleBodyClick}>
                     {body}
                 </p>
             )}
-            <button className='button delete-button' onClick={handleDelete} title='delete note'>
+
+            <button className='button delete-button' onClick={handleDelete} title='Delete note'>
                 <img src={deleteIcon} alt="" />
             </button>
         </li>

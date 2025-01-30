@@ -1,10 +1,14 @@
 import { Note } from "../../types"
 
-const electron = require('electron')
+const {contextBridge, ipcRenderer} = require('electron')
 
-electron.contextBridge.exposeInMainWorld('notes', {
-    getAll: ()=> electron.ipcRenderer.invoke('note:getAll'),
-    add: (note: Note)=> electron.ipcRenderer.invoke('note:add', note),
-    update: (id: string, note: Note)=> electron.ipcRenderer.invoke('note:update',id, note),
-    delete: (id: string)=> electron.ipcRenderer.invoke('note:delete',id),
+contextBridge.exposeInMainWorld('notes', {
+    getAll: ()=> ipcRenderer.invoke('note:getAll'),
+    add: (note: Note)=> ipcRenderer.invoke('note:add', note),
+    update: (id: string, note: Note)=> ipcRenderer.invoke('note:update',id, note),
+    delete: (id: string)=> ipcRenderer.invoke('note:delete',id),
+})
+
+contextBridge.exposeInMainWorld('updatedNotes', {
+    onUpdateNotes: (callback: (notes: boolean)=>void) => ipcRenderer.on('update-notes', (_event, value: boolean) => callback(value))
 })

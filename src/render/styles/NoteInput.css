@@ -1,0 +1,18 @@
+.note-input-container{
+    display: flex;
+}
+
+.note-input {
+    width: 90%;
+    background-color: #494747;
+    border: none;
+    color: aliceblue;
+    height: 2rem;
+    padding-left: .6rem;
+    font-size: 1.3rem;
+}
+
+.submit-button{
+    width: 10%;
+    cursor: pointer;
+}

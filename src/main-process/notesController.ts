@@ -1,12 +1,13 @@
 import fs from 'fs/promises';
 import { Note } from '../../types.js' 
+import { BrowserWindow } from 'electron';
 
 const filePath = './notes.json';
 
 async function ensureFileExists(): Promise<void> {
     try {
         await fs.access(filePath);
-    } catch (error: unknown) {
+    } catch (error) {
         if (error.code === 'ENOENT') {
         const initialNotes: Note[] = [
             {
@@ -20,20 +21,25 @@ async function ensureFileExists(): Promise<void> {
     }
 }
 
-export async function getNotes(): Promise<Note[]> {
+export async function getNotes(mainWindow:BrowserWindow ,): Promise<Note[]> {
     await ensureFileExists();
     const notesData = await fs.readFile(filePath, 'utf8');
+    mainWindow.webContents.send('update-notes',true)
     return JSON.parse(notesData) as Note[];
 }
-export async function addNote(newNote: Note): Promise<Note> {
-    const notes = await getNotes();
-    notes.push(newNote);
+export async function addNote(mainWindow:BrowserWindow, newNote: Note): Promise<Note> {
+    const notes = await getNotes(mainWindow);
+    notes.push({
+      ...newNote,
+      title: 'Title'
+    });
     await fs.writeFile(filePath, JSON.stringify(notes, null, 2));
+    mainWindow.webContents.send('update-notes',true)
     return newNote;
 }
 
-export async function updateNote(id: string, updatedData: Partial<Note>): Promise<Note> {
-  const notes = await getNotes();
+export async function updateNote(mainWindow:BrowserWindow ,id: string, updatedData: Partial<Note>): Promise<Note> {
+  const notes = await getNotes(mainWindow);
   const noteIndex = notes.findIndex((note) => note.id === id);
 
   if (noteIndex === -1) {
@@ -42,11 +48,12 @@ export async function updateNote(id: string, updatedData: Partial<Note>): Promis
 
   notes[noteIndex] = { ...notes[noteIndex], ...updatedData };
   await fs.writeFile(filePath, JSON.stringify(notes, null, 2));
+  mainWindow.webContents.send('update-notes',true)
   return notes[noteIndex];
 }
 
-export async function deleteNote(id: string): Promise<{ success: boolean }> {
-  const notes = await getNotes();
+export async function deleteNote(mainWindow:BrowserWindow ,id: string): Promise<{ success: boolean }> {
+  const notes = await getNotes(mainWindow);
   const filteredNotes = notes.filter((note) => note.id !== id);
 
   if (filteredNotes.length === notes.length) {
@@ -54,27 +61,6 @@ export async function deleteNote(id: string): Promise<{ success: boolean }> {
   }
 
   await fs.writeFile(filePath, JSON.stringify(filteredNotes, null, 2));
+  mainWindow.webContents.send('update-notes',true)
   return { success: true };
 }
-
-// (async () => {
-//     await ensureFileExists();
-  
-//     // Add a new note
-//     await addNote({
-//       id: '2',
-//       title: 'Node.js',
-//       body: 'fs/promises permite manejar archivos asíncronamente',
-//     });
-  
-//     // Get all notes
-//     console.log('All Notes:', await getNotes());
-  
-//     // Update a note
-//     await updateNote('2', { body: 'Actualizamos el contenido de la nota' });
-//     console.log('Updated Note:', await getNotes());
-  
-//     // Delete a note
-//     await deleteNote('1');
-//     console.log('Notes after deletion:', await getNotes());
-//   })();

@@ -11,11 +11,19 @@
 
 .note-body {
     padding: .5rem;
-    margin: 1rem;
+    margin: .5rem;
     text-align: left;
 }
-.note-body:hover {
+.note-body:hover, .title:hover {
     background-color: #353333;
+    border-radius: .5rem;
+}
+
+.title:hover {
+    width: fit-content;
+    padding-right: 1rem;
+    padding-left: .5rem;
+    margin-left: .5rem;
 }
 
 .button {
@@ -26,6 +34,10 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
+    padding: .5rem .7rem;
+}
+.delete-button:hover {
+    background-color: cornsilk;
 }
 .delete-button img {
     width: 1rem;

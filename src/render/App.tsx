@@ -17,15 +17,24 @@ async function getNotes() {
 
 function App() {
   const [notes, setNotes] = useState<Array<Note>>([])
+  const [update, setUpdate] = useState<boolean>(false)
+
+  window.updatedNotes.onUpdateNotes((value: boolean)=> {
+    setUpdate(value)
+  })
 
   useEffect(()=>{
     getNotes()
-      .then(notes=> setNotes(notes))
-  },[])
+      .then(notes=> {
+        setNotes(notes)
+        setUpdate(false)
+      })
+      .catch(error => console.log(error))
+  },[update])
 
   return (
     <>
-      <h1><u>Notes</u></h1>
+      <h1 className='main-title'><u>Notes</u></h1>
       <NoteInput/>
       <NoteContainer>
         {

@@ -18,15 +18,15 @@ app.on("ready", ()=>{
     // const mainWindowFilePath = path.join(app.getAppPath(), "/dist-render/index.html")
     // mainWindow.loadFile(mainWindowFilePath)
     
-    ipcMain.handle('note:getAll', getNotes)
+    ipcMain.handle('note:getAll', () => getNotes(mainWindow))
     ipcMain.handle('note:add', (_, note) => {
-        return addNote(note);
+        return addNote(mainWindow, note);
     });
     ipcMain.handle('note:update', (_, id, note) => {
-        return updateNote(id, note);
+        return updateNote(mainWindow, id, note);
     });
     ipcMain.handle('note:delete', (_, id) => {
-        return deleteNote(id);
+        return deleteNote(mainWindow, id);
     });
 })
 
