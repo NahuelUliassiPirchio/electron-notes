@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron"
 import path from "path"
 import { getNotes, addNote, deleteNote, updateNote } from "./notesController.js"
+import { exportNoteToPDF } from './pdfController.js'
 
 
 app.on("ready", ()=>{
@@ -28,6 +29,10 @@ app.on("ready", ()=>{
     ipcMain.handle('note:delete', (_, id) => {
         return deleteNote(mainWindow, id);
     });
+    ipcMain.handle('note-pdf', (_, note, imgPath, outputPath) => {
+        return exportNoteToPDF(note, imgPath, outputPath);
+    });
+
 })
 
 

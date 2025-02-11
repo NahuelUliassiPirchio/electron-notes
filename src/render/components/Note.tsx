@@ -1,5 +1,6 @@
 import { BaseSyntheticEvent, useState } from 'react';
 import deleteIcon from '../assets/delete-icon.svg';
+import pdfIcon from '../assets/pdf-icon.svg';
 import '../styles/NoteItem.css';
 import { Note } from '../../../types';
 
@@ -49,6 +50,14 @@ export default function NoteItem(noteContent: Note) {
         }
     };
 
+    const handleExportToPdf = (_e: BaseSyntheticEvent) => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB').replace(/\//g, '-'); // Format: DD-MM-YYYY
+        const formattedTime = now.toLocaleTimeString('en-GB', { hour12: false }).replace(/:/g, '-'); // Format: HH-MM-SS
+        const pdfName = `./${formattedDate} ${formattedTime}.pdf`;
+        window.toPdf.exportNoteToPDF({ ...noteContent, title }, '', pdfName);
+    };
+
     const handleDelete = (_e: BaseSyntheticEvent) => {
         window.notes.delete(noteContent.id);
     };
@@ -86,9 +95,14 @@ export default function NoteItem(noteContent: Note) {
                 </p>
             )}
 
-            <button className='button delete-button' onClick={handleDelete} title='Delete note'>
-                <img src={deleteIcon} alt="" />
-            </button>
+            <div className='buttons-container'>
+                <button className='button pdf-button' onClick={handleExportToPdf} title='Export note to pdf'>
+                    <img src={pdfIcon} alt="" />
+                </button>
+                <button className='button delete-button' onClick={handleDelete} title='Delete note'>
+                    <img src={deleteIcon} alt="" />
+                </button>
+            </div>
         </li>
     );
 }

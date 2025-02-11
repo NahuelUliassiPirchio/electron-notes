@@ -12,3 +12,7 @@ contextBridge.exposeInMainWorld('notes', {
 contextBridge.exposeInMainWorld('updatedNotes', {
     onUpdateNotes: (callback: (notes: boolean)=>void) => ipcRenderer.on('update-notes', (_event, value: boolean) => callback(value))
 })
+
+contextBridge.exposeInMainWorld('toPdf', {
+    exportNoteToPDF: (note:Note, imgPath: string, outputPath: string) => ipcRenderer.invoke('note-pdf', note, imgPath, outputPath)
+})

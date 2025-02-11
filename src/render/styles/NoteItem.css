@@ -26,19 +26,22 @@
     margin-left: .5rem;
 }
 
-.button {
-    border-radius: 50%;
-    background-color: grey;
-}
-.delete-button {
+
+.buttons-container{
     position: absolute;
     top: 1rem;
     right: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+.button {
+    border-radius: 50%;
+    background-color: grey;
     padding: .5rem .7rem;
 }
 .delete-button:hover {
     background-color: cornsilk;
 }
-.delete-button img {
+.button img {
     width: 1rem;
 }
