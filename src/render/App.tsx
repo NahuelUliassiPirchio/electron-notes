@@ -5,12 +5,6 @@ import NoteInput from './components/NoteInput'
 import NoteContainer from './components/NotesContainer'
 import './styles/App.css'
 
-const MOCKED_NOTES: Array<Note> = [{
-  id: '1',
-  title: 'Electron js',
-  body: 'contextIsolation sirve para separar procesos'
-}]
-
 async function getNotes() {
   return window.notes.getAll()
 }

@@ -1,13 +1,22 @@
-import { app, BrowserWindow, ipcMain } from "electron"
+import { app, BrowserWindow, ipcMain, globalShortcut, desktopCapturer } from "electron"
+import fs from 'fs'
 import path from "path"
 import { getNotes, addNote, deleteNote, updateNote } from "./notesController.js"
 import { exportNoteToPDF } from './pdfController.js'
 
+let mainWindow: BrowserWindow;
+const NOTES_FOLDER = path.join(app.getPath('documents'), 'ElectronNotes');
+
+if (!fs.existsSync(NOTES_FOLDER)) {
+    fs.mkdirSync(NOTES_FOLDER, { recursive: true });
+}
 
 app.on("ready", ()=>{
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         webPreferences: {
-            preload: path.join(app.getAppPath(), './dist-main/preload.cjs') // if production ../
+            preload: path.join(app.getAppPath(), './dist-main/preload.cjs'), // if production ../
+            contextIsolation: true,
+            nodeIntegration: false
         }
     })
 
@@ -33,8 +42,24 @@ app.on("ready", ()=>{
         return exportNoteToPDF(note, imgPath, outputPath);
     });
 
+    globalShortcut.register('CommandOrControl+Shift+S', async () => {
+        await captureScreenshot();
+    });
+
+    mainWindow.on('closed', () => {
+        mainWindow = null;
+    });
 })
 
+async function captureScreenshot() {
+    console.log('hello')
+}
+
+ipcMain.on('save-annotation', (event, data) => {
+    const annotationPath = path.join(NOTES_FOLDER, `Annotated-${Date.now()}.json`);
+    fs.writeFileSync(annotationPath, JSON.stringify(data, null, 2));
+    console.log(`Anotación guardada en: ${annotationPath}`);
+});
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
