@@ -1,0 +1,23 @@
+.screenshot-annotator-container {
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.screenshot-image {
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 10px;
+    align-self: center;
+}
+
+.annotation-text-area {
+    width: 80%;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.on-close-button {
+    margin-left: 10px;
+}

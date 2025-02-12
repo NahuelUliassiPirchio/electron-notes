@@ -1,18 +1,28 @@
 import { useEffect, useState } from 'react'
 import { Note } from '../../types'
-import NoteItem from './components/Note'
+import NoteItem from './components/NoteItem'
 import NoteInput from './components/NoteInput'
 import NoteContainer from './components/NotesContainer'
 import './styles/App.css'
+import ScreenshotAnnotator from './components/ScreenshotAnnotator'
 
 async function getNotes() {
   return window.notes.getAll()
 }
 
 function App() {
+  const [screenshot, setScreenshot] = useState<string | null>(null);
+
+  useEffect(() => {
+      window.screenshot.onScreenshotCaptured((imagePath: string) => {
+          setScreenshot(imagePath);
+      });
+  }, []);
+
+
   const [notes, setNotes] = useState<Array<Note>>([])
   const [update, setUpdate] = useState<boolean>(false)
-
+  
   window.updatedNotes.onUpdateNotes((value: boolean)=> {
     setUpdate(value)
   })
@@ -30,13 +40,17 @@ function App() {
     <>
       <h1 className='main-title'><u>Notes</u></h1>
       <NoteInput/>
-      <NoteContainer>
-        {
-          notes.map(note => 
-            <NoteItem key={note.id} id={note.id} title={note.title} body={note.body}/>
-          )
-        }
-      </NoteContainer>
+      {
+        screenshot? 
+        <ScreenshotAnnotator screenshot={screenshot} onClose={() => setScreenshot(null)}/>:
+        <NoteContainer>
+          {
+            notes.map(note => 
+              <NoteItem key={note.id} id={note.id} title={note.title} body={note.body} imagePath={note.imagePath}/>
+            )
+          }
+        </NoteContainer>
+      }
     </>
   )
 }

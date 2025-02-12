@@ -13,10 +13,19 @@
     padding: .5rem;
     margin: .5rem;
     text-align: left;
+    white-space: pre-line;
 }
 .note-body:hover, .title:hover {
     background-color: #353333;
     border-radius: .5rem;
+}
+
+.note-body-edit {
+    padding: .5rem;
+    margin: .5rem;
+    text-align: left;
+    margin: 0 auto;
+    width: 95%;
 }
 
 .title:hover {
@@ -24,6 +33,16 @@
     padding-right: 1rem;
     padding-left: .5rem;
     margin-left: .5rem;
+}
+.note-title-edit{
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    width: 95%;
+}
+
+.note-item-container img {
+    max-width: 700px;
+    height: auto;
 }
 
 

@@ -1,6 +1,5 @@
+import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron"
 import { Note } from "../../types"
-
-const {contextBridge, ipcRenderer} = require('electron')
 
 contextBridge.exposeInMainWorld('notes', {
     getAll: ()=> ipcRenderer.invoke('note:getAll'),
@@ -10,9 +9,17 @@ contextBridge.exposeInMainWorld('notes', {
 })
 
 contextBridge.exposeInMainWorld('updatedNotes', {
-    onUpdateNotes: (callback: (notes: boolean)=>void) => ipcRenderer.on('update-notes', (_event, value: boolean) => callback(value))
+    onUpdateNotes: (callback: (notes: boolean)=>void) => ipcRenderer.on('update-notes', (_event: IpcRendererEvent, value: boolean) => callback(value))
 })
 
 contextBridge.exposeInMainWorld('toPdf', {
     exportNoteToPDF: (note:Note, imgPath: string, outputPath: string) => ipcRenderer.invoke('note-pdf', note, imgPath, outputPath)
+})
+
+contextBridge.exposeInMainWorld('screenshot', {
+    captureScreenshot: () => ipcRenderer.send('capture-screenshot'),
+    onScreenshotCaptured: (callback: (imagePath:string)=>void) => ipcRenderer.on('screenshot-captured', (_event: IpcRendererEvent, imagePath: string) => callback(imagePath)),
+    getScreenshotBase64: async (imagePath:string) => {
+        return await ipcRenderer.invoke('get-screenshot-base64', imagePath);
+    }
 })

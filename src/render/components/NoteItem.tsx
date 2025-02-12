@@ -1,10 +1,22 @@
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import deleteIcon from '../assets/delete-icon.svg';
 import pdfIcon from '../assets/pdf-icon.svg';
 import '../styles/NoteItem.css';
 import { Note } from '../../../types';
 
 export default function NoteItem(noteContent: Note) {
+    const [imageData, setImageData] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function loadImage() {
+            if (noteContent.imagePath) {
+                const base64Image = await window.screenshot.getScreenshotBase64(noteContent.imagePath);
+                setImageData(base64Image);
+            }
+        }
+        loadImage();
+    }, [noteContent.imagePath]);
+
     const [isEditingBody, setIsEditingBody] = useState(false);
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [title, setTitle] = useState(noteContent.title);
@@ -50,7 +62,7 @@ export default function NoteItem(noteContent: Note) {
         }
     };
 
-    const handleExportToPdf = (_e: BaseSyntheticEvent) => {
+    const handleExportToPdf = () => {
         const now = new Date();
         const formattedDate = now.toLocaleDateString('en-GB').replace(/\//g, '-'); // Format: DD-MM-YYYY
         const formattedTime = now.toLocaleTimeString('en-GB', { hour12: false }).replace(/:/g, '-'); // Format: HH-MM-SS
@@ -58,7 +70,7 @@ export default function NoteItem(noteContent: Note) {
         window.toPdf.exportNoteToPDF({ ...noteContent, title }, '', pdfName);
     };
 
-    const handleDelete = (_e: BaseSyntheticEvent) => {
+    const handleDelete = () => {
         window.notes.delete(noteContent.id);
     };
 
@@ -88,12 +100,15 @@ export default function NoteItem(noteContent: Note) {
                     onBlur={handleBodySave}
                     onKeyDown={handleBodyKeyDown}
                     autoFocus
+                    rows={body.split("\n").length || 1}
                 />
             ) : (
                 <p className='note-body' onClick={handleBodyClick}>
                     {body}
                 </p>
             )}
+
+            {imageData && <img src={imageData} alt="Screenshot" />}
 
             <div className='buttons-container'>
                 <button className='button pdf-button' onClick={handleExportToPdf} title='Export note to pdf'>

@@ -42,7 +42,18 @@ app.on("ready", ()=>{
         return exportNoteToPDF(note, imgPath, outputPath);
     });
 
-    globalShortcut.register('CommandOrControl+Shift+S', async () => {
+    ipcMain.handle('get-screenshot-base64', async (_event, imagePath) => {
+        try {
+            const imageBuffer = fs.readFileSync(imagePath);
+            return `data:image/png;base64,${imageBuffer.toString('base64')}`;
+        } catch (error) {
+            console.error('Error loading screenshot:', error);
+            return null;
+        }
+    });
+
+
+    globalShortcut.register('CommandOrControl+Alt+S', async () => {
         await captureScreenshot();
     });
 
@@ -52,14 +63,27 @@ app.on("ready", ()=>{
 })
 
 async function captureScreenshot() {
-    console.log('hello')
-}
+    const sources = await desktopCapturer.getSources({
+        types: ['screen'],
+        thumbnailSize: { width: 3840, height: 2160 }
+    });
 
-ipcMain.on('save-annotation', (event, data) => {
-    const annotationPath = path.join(NOTES_FOLDER, `Annotated-${Date.now()}.json`);
-    fs.writeFileSync(annotationPath, JSON.stringify(data, null, 2));
-    console.log(`Anotación guardada en: ${annotationPath}`);
-});
+    const screen = sources[0];
+
+    if (!screen) {
+        console.error('No se pudo capturar la pantalla.');
+        return;
+    }
+
+    const image = Buffer.from(screen.thumbnail.toPNG());
+    const screenshotPath = path.join(NOTES_FOLDER, `screenshot-${Date.now()}.png`);
+    fs.writeFileSync(screenshotPath, image);
+
+    console.log(`Captura guardada en: ${screenshotPath}`);
+
+    mainWindow.webContents.send('screenshot-captured', screenshotPath);
+    mainWindow.focus()
+}
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
